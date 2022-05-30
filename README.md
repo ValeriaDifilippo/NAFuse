@@ -76,10 +76,6 @@ We suggested to manually check the reality of the gene fusions by analysing the 
 -	In some instances, such as in Case 17 harbouring a TP53-EVA1B fusion, the breakpoint on the DNA level was located upstream of the 3’ partner gene. To solve this, we increased gene boundaries (start and stop) by 50 000 bp each.
 -	Use the correct gene annotation file. Be sure to use the same gene annotation used by your gene fusion detector of choice. It can be necessary to merge multiple gene annotations files (GRCh37/hg19 and GRCh38/hg38).
 
-### Run NAFuse with test examples:
-
-Test examples are provided in /NAFuse/examples directory.
-
 ### Reference
 1.	Neph S, Kuehn MS, Reynolds AP, et al. BEDOPS: high-performance genomic feature operations. Bioinformatics. 2012; 28: 1919-1920.
 
