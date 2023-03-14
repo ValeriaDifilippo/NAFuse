@@ -8,7 +8,7 @@ When using the algorithm, please cite:
 Before starting the analysis, make sure to have the prerequisites.
 
 1.  BEDTools Suite (v. 2.26.0 or later).
-2.  BEDOPS tools (2.4.32 or later).
+2.  BEDOPS tools (v. 2.4.32 or later).
 3.  Gene annotation. 
     Based on the genome reference, download the matching file with gene coordinates and save it in BED format. Having the reference in BED format is essential to run the bedmap command.
     
@@ -25,7 +25,7 @@ mkdir RNA_seq
 mkdir NAFuse_output
  ```
 2. Prepare the RNA-sequencing file. 
-From the outputof a gene fusion detector create a text file with two columns. The first column containing the 5' partner and the second column containing the 3' partner. Each line now represents a gene fusion. Save this file in folder RNA_seq/.
+From the output of a gene fusion detector create a text file with two columns. The first column containing the 5' partner and the second column containing the 3' partner. Each line now represents a gene fusion. Save this file in folder RNA_seq/.
  
 3. Convert the BAM file in BED file with bamToBed sub-command
  ```
@@ -74,6 +74,9 @@ We suggested to manually check the reality of the gene fusions by analysing the 
 -	NAFuse was tested in cases reported in this study. It was able to successfully detect all the gene fusions described when DNA and RNA were available, such as FOSL1::RELA and FUS::TFCP2.
 -	In some instances, the breakpoint on the DNA level could be located upstream of the 3’ partner gene. To solve this, we increased gene boundaries (start and stop) by 50 000 bp each.
 -	Use the correct gene annotation file. Be sure to use the same gene annotation used by your gene fusion detector of choice. It can be necessary to merge multiple gene annotations files (GRCh37/hg19 and GRCh38/hg38).
+
+### Limitations
+NAFuse was tested with both whole genome mate pair and whole genome paired-end sequencing. The ruuning time depends on how many gene fusions are in the RNA-sequencing file. It takes a maximum of ~15 minutes for gene fusion.
 
 ### References
 1.	Quinlan, A.R. and I.M. Hall, BEDTools: a flexible suite of utilities for comparing genomic features. Bioinformatics, 2010. 26(6): p. 841-842
