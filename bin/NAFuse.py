@@ -22,21 +22,11 @@ parser.add_argument('Output', nargs='+', help='output')
 args = parser.parse_args()
 print(args.accumulate(args.integers))
 
-#path1 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
-#all_files = glob.glob(os.path.join(path, "*.bed"))
-#path2 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
-#out_path = "/home/bioinfo/Documents/Valeria/NAFuse/output/"
-
-#name = '415-03'
-###Extract files name
-
-
 filenames1 = glob.glob(os.path.join(sys.argv[1]+ "*NAFuse_read1.bed"))
 filenames2 = glob.glob(os.path.join(sys.argv[2]+ "*NAFuse_read2.bed"))
 
 
 ###Fusion
-#fusion_path = "/home/bioinfo/Documents/Valeria/NAFuse/Fusions/"
 fusion_output = pd.read_csv(sys.argv[3]+".txt", header=None, delimiter= " ", low_memory=False, names=("Gene1","Gene2"))
 
 gene1 = fusion_output['Gene1'].tolist()
@@ -46,7 +36,6 @@ gene2 = fusion_output['Gene2'].tolist()
 fusions2= [f'/b{x}/b' for x in gene2]
 
 print("Upload fusions")
-
 
 matches1= []
 
