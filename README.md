@@ -57,7 +57,16 @@ The bed file generated in point 3 contains rows with read information. It is imp
 ![NAFuse](https://user-images.githubusercontent.com/91432163/222132567-1545c34a-2d72-4f6d-afb3-bcefefb8f614.jpg)
 
 
-7. It’s time to run the core of NAFuse. The script is written in Python3 and it can be found in bin/ folder called NAFuse.py. If you want to analyze multiple files, run NAFuse_forloop.py. The script operates in two main steps.
+7. It’s time to run the core of NAFuse. The script is written in Python3 and it can be found in bin/ folder called NAFuse.py. If you want to analyze multiple files. 
+
+```
+python3 NAFuse.py -h [--help]
+
+NAFuse.py [-h] Read1 [Read1 ...] Read2 [Read2 ...] Fusion [Fusion ...] Output [Output ...]
+
+```
+
+The script operates in two main steps.
 
    -	Search if there are matches between the output file from a gene fusion detector generated in point 2 and the genomic files generated in point 6.
    -	Create a file where each row contains the information belonging to the same read. It’s possible to merge the lines based on read name. If a gene fusion is present in a line, it’ll be considered a potential gene fusion.
