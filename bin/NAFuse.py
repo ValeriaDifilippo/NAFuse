@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Fri Oct 15 10:25:44 2021
-
 @author: Valeria Difilippo
 """
 import numpy as np
@@ -10,24 +9,35 @@ import pandas as pd
 import glob
 import os
 import csv
+import sys
+import argparse
 
 
-path1 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
+parser = argparse.ArgumentParser(prog='NAFuse.py',description='The tool allows for the detection of breakpoints in both partner genes/regions on both the RNA and DNA levels without having to manually search output files generated during downstream processing of BAM-files.')
+parser.add_argument('Read1', nargs='+', help='Read1 of a case')
+parser.add_argument('Read2', nargs='+', help='Read2 of a case')
+parser.add_argument('Fusion', nargs='+', help='Fusion list')
+parser.add_argument('Output', nargs='+', help='output')
+
+args = parser.parse_args()
+print(args.accumulate(args.integers))
+
+#path1 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
 #all_files = glob.glob(os.path.join(path, "*.bed"))
-path2 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
-out_path = "/home/bioinfo/Documents/Valeria/NAFuse/output/"
+#path2 = "/home/bioinfo/Documents/Valeria/NAFuse/files_bed/"
+#out_path = "/home/bioinfo/Documents/Valeria/NAFuse/output/"
 
-name = '415-03'
+#name = '415-03'
 ###Extract files name
 
 
-filenames1 = glob.glob(os.path.join(path1+name+ "*NAFuse_read1.bed"))
-filenames2 = glob.glob(os.path.join(path2+name+ "*NAFuse_read2.bed"))
+filenames1 = glob.glob(os.path.join(sys.argv[1]+ "*NAFuse_read1.bed"))
+filenames2 = glob.glob(os.path.join(sys.argv[2]+ "*NAFuse_read2.bed"))
 
 
 ###Fusion
-fusion_path = "/home/bioinfo/Documents/Valeria/NAFuse/Fusions/"
-fusion_output = pd.read_csv(fusion_path+name+".txt", header=None, delimiter= " ", low_memory=False, names=("Gene1","Gene2"))
+#fusion_path = "/home/bioinfo/Documents/Valeria/NAFuse/Fusions/"
+fusion_output = pd.read_csv(sys.argv[3]+".txt", header=None, delimiter= " ", low_memory=False, names=("Gene1","Gene2"))
 
 gene1 = fusion_output['Gene1'].tolist()
 fusions1= [f'/b{x}/b' for x in gene1]
@@ -101,7 +111,6 @@ for x in l:
 
 
 out = pd.DataFrame(NAFuse_out).drop_duplicates()
-out.to_csv(out_path+name+'.txt', index = False,  sep= "\t", header= ['5_end', '3_end'])
+out.to_csv(sys.argv[4]+'.txt', index = False,  sep= "\t", header= ['5_end', '3_end'])
 
 print("Done")
-
