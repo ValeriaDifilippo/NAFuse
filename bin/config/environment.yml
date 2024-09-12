@@ -1,0 +1,12 @@
+name: NAFuse
+channels:
+  - defaults
+dependencies:
+  - python=3.8
+  - pandas=1.3.0
+  - pip
+  - pip:
+      - requests
+      - ipython
+      - numpy
+      - snakemake

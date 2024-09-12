@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Modify the BAM file. First step for NAFuse v2.0.0
+Created on Tue Sep 10
+@author: Valeria Difilippo
+"""
+
+import os
+import glob
+
+# Get the input directory, output directory, and annotation file from the command line
+input_dir = config["input_dir"]
+output_dir = config["output_dir"]
+annotation_file = config["annotation_file"]  # New parameter for annotation file
+
+# List BAM files and extract prefixes (i.e., filenames without .bam extension)
+bam_files = [os.path.splitext(os.path.basename(f))[0] for f in glob.glob(os.path.join(input_dir, "*.bam"))] #os.path.splitext() function, which splits the file name into the base name and the extension. This will make your code more robust to different file extensions.
+print("Found BAM files:", bam_files)
+
+# Rule definitions
+rule all:
+    input:
+        expand(os.path.join(output_dir, "{bam_prefix}_DNA.bed"), bam_prefix=bam_files) + \
+        [os.path.join(output_dir, "clean_done.txt")]
+
+rule filter_bam:
+    input:
+        os.path.join(input_dir, "{bam_prefix}.bam")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_split_reads.bam")
+    shell:
+        """
+        echo "Processing {input}"
+        samtools view -@ 10 -h {input} | \
+        awk '($6 ~ /S/ || $6 ~ /H/ || $7 != "=")' | \
+        samtools view -b > {output}
+        echo "Created {output}"
+        """
+
+rule bam_to_bed:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_split_reads.bam")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_split_reads.bed")
+    shell:
+        "bedtools bamtobed -i {input} > {output}"
+
+rule intersect_bed:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_split_reads.bed"),
+        annotation_file  # Now using the annotation file from the command line config
+    output:
+        os.path.join(output_dir, "{bam_prefix}_annotated_output.bed")
+    shell:
+        "bedtools intersect -a {input[0]} -b {input[1]} -wa -wb > {output}"
+
+rule process_read1:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_annotated_output.bed")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_read1.bed")
+    shell:
+        """
+        awk '{{gsub("/","\t",$0);print;}}' {input} | \
+        awk '$5=="1"' | \
+        awk '{{gsub(" ","\t",$0);print;}}' | \
+        awk '{{print $1,$2,$3,$4,$14}}' | \
+        awk '{{gsub(" ","\t",$0);print;}}' > {output}
+        echo "Created {output}"
+        """
+
+rule process_read2:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_annotated_output.bed")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_read2.bed")
+    shell:
+        """
+        awk '{{gsub("/","\t",$0);print;}}' {input} | \
+        awk '$5=="2"' | \
+        awk '{{gsub(" ","\t",$0);print;}}' | \
+        awk '{{print $1,$2,$3,$4,$14}}' | \
+        awk '{{gsub(" ","\t",$0);print;}}' > {output}
+        echo "Created {output}"
+        """
+
+rule sort_read1:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_read1.bed")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_read1_sorted.bed")
+    shell:
+        "sort -k4,4 {input} > {output}"
+
+rule sort_read2:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_read2.bed")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_read2_sorted.bed")
+    shell:
+        "sort -k4,4 {input} > {output}"
+
+rule join_reads:
+    input:
+        os.path.join(output_dir, "{bam_prefix}_read1_sorted.bed"),
+        os.path.join(output_dir, "{bam_prefix}_read2_sorted.bed")
+    output:
+        os.path.join(output_dir, "{bam_prefix}_DNA.bed")
+    shell:
+        """
+        join -1 4 -2 4 {input[0]} {input[1]} | \
+        awk '{{gsub(" ","\t",$0);print;}}' > {output}
+        echo "Final output created: {output}"
+        """
+
+rule clean_files:
+    input:
+        expand(os.path.join(output_dir, "{bam_prefix}_DNA.bed"), bam_prefix=bam_files)
+    output:
+        os.path.join(output_dir, "clean_done.txt")
+    shell:
+        """
+        find {output_dir} -maxdepth 1 -type f ! -name '*_DNA.bed' -exec rm -f {{}} +
+        touch {output}
+        """
