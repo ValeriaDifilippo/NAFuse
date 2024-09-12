@@ -6,8 +6,7 @@ NAFuse (Nucleic Acid Fusion) is an integrated methodology that combines and comp
 
 The BAM file from a sequencing contains information about the reads. When converted in a BED format, the latter contains in each line information about a genomic interval on a specific chromosome with the given start, end positions and read description (Figure 1). 
 
-
-![NAFuse](https://github.com/user-attachments/assets/26cb9e26-4c2c-42db-886e-73c58785bae5)
+![NAFuse](https://github.com/user-attachments/assets/381c63a7-20d7-4185-9f3e-8db8c4ce8689)
 
 **Fig 1. How sequencing reads can align across the genome.**
 The two ends of the read can align to (A) the same gene, (B) different genes on the same chromosome, or (C) different genes on different chromosomes. (D) The breakpoint at the DNA-level could be located outside of the partner genes and we therefore increased gene boundaries (start and end position) by 50000 bp to account for such events. https://doi.org/10.1002/path.6219
